@@ -1,0 +1,13 @@
+---
+- hosts: solaris10
+  gather_facts: no
+
+  tasks:
+  - name: UNIX_OS_SOLARIS_CHK_SWAP_USAGE_CHECK
+    shell:
+      echo $( /usr/sbin/swap -l | tail -1 | awk '{print ($4-$5)/$4*100}' )
+    register: result
+
+  - name: debug
+    debug:
+      msg: '[{ "UNIX_OS_SOLARIS_CHK_SWAP_USAGE_CHECK" : "{{ result.stdout | trim }}" }]'

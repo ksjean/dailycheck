@@ -1,0 +1,13 @@
+---
+- hosts: solaris10
+  gather_facts: no
+
+  tasks:
+  - name: UNIX_OS_SOLARIS_CHK_FILESYSTEM_READONLY_CHECK
+    shell:
+      echo $( /usr/sbin/mount | egrep -v "REPO|INCR" | grep -i "read only" | wc -l )
+    register: result
+
+  - name: debug
+    debug:
+      msg: '[{ "UNIX_OS_SOLARIS_CHK_FILESYSTEM_READONLY_CHECK" : "{{ result.stdout | trim }}" }]'

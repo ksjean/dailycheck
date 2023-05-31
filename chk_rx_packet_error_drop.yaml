@@ -1,0 +1,12 @@
+---
+- hosts: solaris11
+  vars:
+    result: []
+
+  tasks:
+  - name: UNIX_OS_SOLARIS_CHK_RX_PACKET_ERROR_DROP_CHECK
+    shell: echo $( netstat -in -f inet | egrep -vi "name|lo0" | awk '{print $1"|"$6"|"$8}' )
+    register: result
+  - name: DEBUG
+    debug:
+      msg: '[{ "UNIX_OS_SOLARIS_CHK_RX_PACKET_ERROR_DROP" : "{{ result.stdout | trim }}" }]'

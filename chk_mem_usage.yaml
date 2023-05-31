@@ -1,0 +1,14 @@
+---
+- hosts: solaris10
+  gather_facts: no
+
+  tasks:
+  - name: UNIX_OS_SOLARIS_CHK_MEMORY_USAGE_CHECK
+    shell: |
+      totmem=$(prtconf | grep size | awk '{print $3*1024}')
+      echo $( /usr/bin/vmstat 1 2 | tail -1 | /usr/xpg4/bin/awk -v vtotmem="$totmem" '{printf "%d", (100-$5/vtotmem*100)}')
+    register: result
+
+  - name: debug
+    debug:
+      msg: '[{ "UNIX_OS_SOLARIS_CHK_MEMORY_USAGE_CHECK" : "{{ result.stdout | trim }}" }]'

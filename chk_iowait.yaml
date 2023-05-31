@@ -1,0 +1,13 @@
+---
+- hosts: solaris10
+  gather_facts: no
+
+  tasks:
+  - name: UNIX_OS_SOLARIS_CHK_CPU_IOWAIT_CHECK
+    shell: |
+      echo $( /usr/sbin/sar 1 2 | grep "Average" | awk '{print $4}')
+    register: result
+
+  - name: debug
+    debug:
+      msg: '[{ "UNIX_OS_SOLARIS_CHK_CPU_IOWAIT_CHECK" : "{{ result.stdout | trim }}" }]'

@@ -1,0 +1,30 @@
+---
+- hosts: solaris10
+
+  tasks:
+  - name: UNIX_OS_SOLARIS_CHK_VAR_ADM_MESSAGES_ERROR_CHECK
+    shell: |
+        yesterday=$(TZ=KST+15;date)
+        yestmon=$(echo $yesterday | awk '{print $2}')
+        yestday=$(echo $yesterday | awk '{print $3}')
+        firstline=$(sudo head -1 /var/adm/messages)
+        firstmon=$(echo $firstline | awk '{print $1}')
+        firstday=$(echo $firstline | awk '{print $2}')
+
+        if [[ '$firstmon$firstday' < '$yestmon$yestday' ]]; then
+          yestline=$( sudo grep -n -i '$yestmon $yestday' /var/adm/messages | cut -d: -f1 | head -1)
+            #if [[ -z `echo $yestline` ]]; then
+              #yestline=1
+            #fi
+        else
+          yestline=1
+        fi
+
+        #echo "first = " $firstmon$firstday
+        #echo "yesterday = " $yestmon$yestday
+        echo $( sudo sed -n $yestline',$p' /var/adm/messages | grep -v mail.crit | egrep -n -i 'AFT|link|fault|offline' | wc -l )
+    register: result
+
+  - name: debug
+    debug:
+      msg: '[{ "UNIX_OS_SOLARIS_CHK_VAR_ADM_MESSAGES_ERROR_CHECK" : "{{ result.stdout | trim }}" }]'

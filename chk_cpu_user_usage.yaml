@@ -1,0 +1,13 @@
+---
+- hosts: solaris10
+  gather_facts: no
+
+  tasks:
+  - name: UNIX_OS_SOLARIS_CHK_CPU_UESR_USAGE_CHECK
+    shell:
+      echo $( /usr/bin/vmstat 1 2 | tail -1 |  awk '{print $20}')
+    register: result
+
+  - name: debug
+    debug:
+      msg: '[{ "UNIX_OS_SOLARIS_CHK_CPU_USER_USAGE_CHECK" : "{{ result.stdout | trim }}" }]'

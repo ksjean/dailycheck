@@ -1,0 +1,34 @@
+---
+- hosts: localhost
+  vars:
+    chk_value: 0
+    output: []
+
+  tasks:
+  - name: GET_CHECK_LISTS
+    shell: netstat -i | egrep -v -i "iface|kernel|lo" | awk '{print $1"|"$5"|"$6}'
+    register: resultlists
+  - name: RX_PACKET_ERROR_DROP_CHECK
+    debug:
+      msg: "{ 'UNIX_OS_SOLARIS_11_CHK_RX_PACKET_ERROR_DROP_{{ myidx }}': '{{ item }}' },"
+    when:
+      - "item.split('|')[1]|int > chk_value|int"
+    loop: "{{ resultlists.stdout_lines }}"
+    register: objects
+    loop_control:
+      label: 1
+      index_var: myidx
+  - name: SET_FACT
+    set_fact:
+      output: |
+        { % set output = output | default([]) % }
+        { % set_ = output.append( item['msg'] ) % }
+        {{ output }}
+    when:
+      - "item['msg'] is defined"
+    loop: "{{ objects.results }}"
+    loop_control:
+      label: 2
+  - name: DEBUG
+    debug:
+      msg: '[{ "UNIX_OS_SOLARIS_11_CHK_RX_PACKET_ERROR_DROP" : "{{ output | trim }}" }]'

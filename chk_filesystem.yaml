@@ -1,0 +1,13 @@
+---
+- hosts: solaris10
+  gather_facts: no
+
+  tasks:
+  - name: UNIX_OS_SOLARIS_CHK_FILESYSTEM_USAGE_CHECK
+    shell:
+      echo $( /usr/sbin/df -h | egrep -v "REPO|INCR" | awk '{print $5}' | sed 's/%//g' | grep [0-9] | awk '{ if($1>90) print $1}' | wc -l )
+    register: result
+
+  - name: debug
+    debug:
+      msg: '[{ "UNIX_OS_SOLARIS_CHK_FILESYSTEM_USAGE_CHECK" : "{{ result.stdout | trim }}" }]'
