@@ -1,5 +1,6 @@
 ---
 - hosts: solaris
+  gather_facts: no
 
   tasks:
   - name: UNIX_OS_SOLARIS_CHK_VAR_ADM_MESSAGES_ERROR_CHECK
