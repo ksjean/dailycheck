@@ -20,8 +20,6 @@
           yestline=1
         fi
 
-        #echo "first = " $firstmon$firstday
-        #echo "yesterday = " $yestmon$yestday
         echo $( sudo sed -n $yestline',$p' /var/adm/messages | grep -v mail.crit | egrep -n -i 'AFT|link|fault|offline' | wc -l )
     register: result
 
