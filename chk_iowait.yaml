@@ -4,7 +4,7 @@
 
   tasks:
   - name: UNIX_OS_SOLARIS_CHK_CPU_IOWAIT_CHECK
-    shell: |
+    shell:
       echo $( /usr/sbin/sar 1 2 | grep "Average" | awk '{print $4}')
     register: result
 
