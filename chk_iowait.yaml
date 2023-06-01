@@ -1,5 +1,5 @@
 ---
-- hosts: solaris10
+- hosts: solaris
   gather_facts: no
 
   tasks:
